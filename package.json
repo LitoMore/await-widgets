@@ -1,14 +1,15 @@
 {
-  "name": "await-trmnl",
+  "name": "await-widgets",
   "private": true,
   "author": "LitoMore",
-  "repository": "LitoMore/await-trmnl",
+  "repository": "LitoMore/await-widgets",
   "license": "MIT",
   "scripts": {
-    "test": "tsc --noEmit"
+    "test": "tsc --noEmit && xo"
   },
   "devDependencies": {
     "@await-widget/runtime": "^0.0.1",
-    "typescript": "^6.0.2"
+    "typescript": "^6.0.2",
+    "xo": "^2.0.2"
   }
 }

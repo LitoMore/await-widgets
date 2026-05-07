@@ -1,24 +1,11 @@
-# Await TRMNL
+# Await Widgets
 
-An Await widget that shows the current TRMNL display image using a device API key.
+Custom widgets for [Await](https://github.com/await-widget/skills), organized as standalone widget folders under [`widgets`](./widgets).
 
-## Configuration
+## Widgets
 
-Open the widget panel and set:
-
-- `trmnlDeviceApiKey`: a TRMNL device API key, entered as a password field
-- `apiBaseUrl`: the TRMNL API base URL
-
-The widget requests `GET https://trmnl.com/api/display/current` with:
-
-```http
-Access-Token: device_xxxxx
-Accept: application/json
-```
-
-## Development
-
-See https://github.com/await-widget/skills.
+- [Image Display](./widgets/image-display) - Displays a configurable image URL with contain, cover, stretch, or tile behavior.
+- [TRMNL](./widgets/trmnl) - Shows the current TRMNL display image using a TRMNL device API key.
 
 ## License
 

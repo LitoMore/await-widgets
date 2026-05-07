@@ -1,12 +1,8 @@
 {
-	"compilerOptions": {
-		"jsx": "react-jsx",
-		"jsxImportSource": "await",
-		"types": [
-			"@await-widget/runtime/global"
-		]
-	},
-	"files": [
-		"index.tsx"
-	]
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "await",
+    "types": ["@await-widget/runtime"]
+  },
+  "include": ["**/*.ts", "**/*.tsx"]
 }
