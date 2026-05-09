@@ -13,8 +13,8 @@ const colorScheme = 'auto';
 const backgroundColor = '';
 // @panel
 const simpleIconsVersion = 'latest';
-// @panel {type:'slider',min:1,max:9999,step:1}
-const shuffleSeed = 1;
+// @panel {type:'menu',items:['per minute','per hour','per day']}
+const updateInterval = 'per hour';
 // @panel
 const showCenterIcon = false;
 // @panel
@@ -28,6 +28,8 @@ type IconItem = {
 };
 
 type Scheme = 'dark' | 'light';
+
+type UpdateInterval = 'per day' | 'per hour' | 'per minute';
 
 type Position = {
 	readonly x: number;
@@ -126,6 +128,7 @@ const icons: IconItem[] = [
 
 function widget(entry: WidgetEntry) {
 	const scheme = normalizeScheme(colorScheme, entry.colorScheme);
+	const interval = normalizeUpdateInterval(updateInterval);
 	const fillColor = backgroundColor || (scheme === 'light' ? 'white' : 'black');
 	const centerIconColor = scheme === 'light' ? '000000' : 'FFFFFF';
 	const size = normalizePositive(iconSize, 28);
@@ -136,7 +139,10 @@ function widget(entry: WidgetEntry) {
 		size,
 		width: entry.size.width,
 	});
-	const shuffledIcons = shuffleIcons(filterIcons(scheme), shuffleSeed);
+	const shuffledIcons = shuffleIcons(
+		filterIcons(scheme),
+		getShuffleSeed(entry.date, interval),
+	);
 	const visibleIcons = fillIcons(shuffledIcons, grid.rows * grid.columns);
 	const ratio = Math.min(
 		(grid.rows % 2) + centerIconRatio,
@@ -225,6 +231,15 @@ function widget(entry: WidgetEntry) {
 			) : undefined}
 		</ZStack>
 	);
+}
+
+function widgetTimeline(): Timeline {
+	const interval = normalizeUpdateInterval(updateInterval);
+
+	return {
+		entries: getTimelineDates(new Date(), interval).map((date) => ({date})),
+		update: 'end',
+	};
 }
 
 function getGrid(options: {
@@ -371,6 +386,66 @@ function shuffleIcons(value: IconItem[], seed: number): IconItem[] {
 	return result;
 }
 
+function getShuffleSeed(date: Date, interval: UpdateInterval): number {
+	const values = [date.getFullYear(), date.getMonth() + 1, date.getDate()];
+
+	if (interval === 'per hour' || interval === 'per minute') {
+		values.push(date.getHours());
+	}
+
+	if (interval === 'per minute') {
+		values.push(date.getMinutes());
+	}
+
+	const seed = values.reduce(
+		(current, value) => (current * 131 + value) % 4_294_967_296,
+		17,
+	);
+
+	return seed || 1;
+}
+
+function getTimelineDates(date: Date, interval: UpdateInterval): Date[] {
+	const length = interval === 'per minute' ? 20 : 2;
+	const dates = [date];
+	let nextDate = date;
+
+	for (let index = 1; index < length; index++) {
+		nextDate = getNextDate(nextDate, interval);
+		dates.push(nextDate);
+	}
+
+	return dates;
+}
+
+function getNextDate(date: Date, interval: UpdateInterval): Date {
+	const nextDate = new Date(date);
+
+	if (interval === 'per minute') {
+		nextDate.setSeconds(0, 0);
+		nextDate.setMinutes(nextDate.getMinutes() + 1);
+		return nextDate;
+	}
+
+	if (interval === 'per hour') {
+		nextDate.setMinutes(0, 0, 0);
+		nextDate.setHours(nextDate.getHours() + 1);
+		return nextDate;
+	}
+
+	nextDate.setHours(0, 0, 0, 0);
+	nextDate.setDate(nextDate.getDate() + 1);
+	return nextDate;
+}
+
+function normalizeUpdateInterval(value: string): UpdateInterval {
+	if (value === 'per minute' || value === 'per hour' || value === 'per day') {
+		return value;
+	}
+
+	return 'per hour';
+}
+
 function normalizeScheme(value: string, fallback: ColorScheme): Scheme {
 	if (value === 'light' || value === 'dark') {
 		return value;
@@ -397,4 +472,5 @@ function normalizeNonNegative(value: number): number {
 
 Await.define({
 	widget,
+	widgetTimeline,
 });

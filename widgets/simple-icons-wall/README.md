@@ -13,7 +13,7 @@ Open the widget panel and set:
 - `colorScheme`: use the host color scheme or force light/dark
 - `backgroundColor`: background color, defaulting to automatic white/black when empty
 - `simpleIconsVersion`: the Simple Icons package version from jsDelivr, defaulting to `latest`
-- `shuffleSeed`: changes the deterministic icon ordering
+- `updateInterval`: reshuffle by time, either `per minute`, `per hour`, or `per day`
 - `showCenterIcon`: whether to show the center Simple Icons logo
 - `hideWhiteIcons`: hide background icons whose original brand color is white
 - `hideBlackIcons`: hide background icons whose original brand color is black
