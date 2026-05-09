@@ -2,16 +2,14 @@
 
 An Await widget inspired by Chrome Dino. Tap the widget to start, jump, and restart after a crash.
 
-The game stores the current run and high score locally with `AwaitStore`, and renders the dinosaur, cacti, clouds, and ground as inline SVG assets. The dinosaur path is derived from the Chromium T-Rex sprite from Wikimedia Commons under the BSD license.
+The game stores the current run and high score locally with `AwaitStore`, and renders the dinosaur, cacti, clouds, and ground as inline SVG assets. The dinosaur and cactus paths are derived from the Chromium T-Rex sprites from Wikimedia Commons under the BSD license.
+
+Movement, acceleration, obstacle timing, and cactus sizing follow Chromium's `offline.js` runner constants using the original 600 x 150 game coordinate system.
 
 ## Configuration
 
 Open the widget panel and set:
 
 - `colorScheme`: use the host color scheme or force light/dark
-- `startSpeed`: the initial running speed
-- `speedRamp`: how quickly the run speeds up
-- `jumpHeight`: the dinosaur jump height
-- `jumpDuration`: how long a full jump lasts, in milliseconds
 - `showClouds`: whether to show the background clouds
 - `showScore`: whether to show the current and high score
