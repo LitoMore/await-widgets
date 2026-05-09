@@ -6,6 +6,10 @@ The game stores the current run and high score locally with `AwaitStore`, and re
 
 Movement, acceleration, obstacle timing, and cactus sizing follow Chromium's `offline.js` runner constants using the original 600 x 150 game coordinate system.
 
+## Known Issues
+
+- Dino can still stutter on the desktop widget surface because it relies on the host widget timeline and native animations instead of a continuous game loop.
+
 ## Configuration
 
 Open the widget panel and set:
