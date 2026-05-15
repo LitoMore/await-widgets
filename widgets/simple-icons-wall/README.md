@@ -4,6 +4,8 @@ An Await widget that renders a configurable Simple Icons wall.
 
 The widget reads the current widget size from Await and uses it as the render area. Only icon layout values need to be configured.
 
+<p align="center"><img src="./assets/screenshot-medium.webp" width="200" /></p>
+
 ## Configuration
 
 Open the widget panel and set:
