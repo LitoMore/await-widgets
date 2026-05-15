@@ -4,9 +4,9 @@ const centerIconRatio = 2;
 const brightThreshold = 0.72;
 
 // @panel {type:'slider',min:12,max:96,step:1}
-const iconSize = 22;
+const iconSize = 24;
 // @panel {type:'slider',min:0,max:48,step:1}
-const iconGap = 10;
+const iconGap = 12;
 // @panel {type:'menu',items:['auto','light','dark']}
 const colorScheme = 'auto';
 // @panel {type:'color'}
