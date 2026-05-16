@@ -23,9 +23,11 @@ const hideWhiteIcons = true;
 const hideBlackIcons = true;
 
 type IconItem = {
-	readonly slug: string;
-	readonly hex: string;
+	hex: string;
+	slug: string;
 };
+
+type JsonObject = Record<string, unknown>;
 
 type Scheme = 'dark' | 'light';
 
@@ -43,88 +45,7 @@ type Grid = {
 	readonly rows: number;
 };
 
-const icons: IconItem[] = [
-	{slug: 'javascript', hex: 'F7DF1E'},
-	{slug: 'typescript', hex: '3178C6'},
-	{slug: 'react', hex: '61DAFB'},
-	{slug: 'nextdotjs', hex: '000000'},
-	{slug: 'nodedotjs', hex: '5FA04E'},
-	{slug: 'npm', hex: 'CB3837'},
-	{slug: 'pnpm', hex: 'F69220'},
-	{slug: 'bun', hex: '000000'},
-	{slug: 'deno', hex: '000000'},
-	{slug: 'vuedotjs', hex: '4FC08D'},
-	{slug: 'nuxt', hex: '00DC82'},
-	{slug: 'svelte', hex: 'FF3E00'},
-	{slug: 'astro', hex: 'BC52EE'},
-	{slug: 'vite', hex: '646CFF'},
-	{slug: 'webpack', hex: '8DD6F9'},
-	{slug: 'rollupdotjs', hex: 'EC4A3F'},
-	{slug: 'eslint', hex: '4B32C3'},
-	{slug: 'prettier', hex: 'F7B93E'},
-	{slug: 'tailwindcss', hex: '06B6D4'},
-	{slug: 'sass', hex: 'CC6699'},
-	{slug: 'css', hex: '663399'},
-	{slug: 'html5', hex: 'E34F26'},
-	{slug: 'webcomponentsdotorg', hex: '29ABE2'},
-	{slug: 'figma', hex: 'F24E1E'},
-	{slug: 'github', hex: '181717'},
-	{slug: 'git', hex: 'F05032'},
-	{slug: 'gitlab', hex: 'FC6D26'},
-	{slug: 'vercel', hex: '000000'},
-	{slug: 'netlify', hex: '00C7B7'},
-	{slug: 'cloudflare', hex: 'F38020'},
-	{slug: 'firebase', hex: 'DD2C00'},
-	{slug: 'supabase', hex: '3FCF8E'},
-	{slug: 'postgresql', hex: '4169E1'},
-	{slug: 'mysql', hex: '4479A1'},
-	{slug: 'sqlite', hex: '003B57'},
-	{slug: 'mongodb', hex: '47A248'},
-	{slug: 'redis', hex: 'FF4438'},
-	{slug: 'prisma', hex: '2D3748'},
-	{slug: 'docker', hex: '2496ED'},
-	{slug: 'kubernetes', hex: '326CE5'},
-	{slug: 'nginx', hex: '009639'},
-	{slug: 'linux', hex: 'FCC624'},
-	{slug: 'apple', hex: '000000'},
-	{slug: 'swift', hex: 'F05138'},
-	{slug: 'xcode', hex: '147EFB'},
-	{slug: 'android', hex: '3DDC84'},
-	{slug: 'kotlin', hex: '7F52FF'},
-	{slug: 'java', hex: '007396'},
-	{slug: 'go', hex: '00ADD8'},
-	{slug: 'rust', hex: '000000'},
-	{slug: 'python', hex: '3776AB'},
-	{slug: 'ruby', hex: 'CC342D'},
-	{slug: 'php', hex: '777BB4'},
-	{slug: 'laravel', hex: 'FF2D20'},
-	{slug: 'dotnet', hex: '512BD4'},
-	{slug: 'c', hex: 'A8B9CC'},
-	{slug: 'cplusplus', hex: '00599C'},
-	{slug: 'sharp', hex: '512BD4'},
-	{slug: 'visualstudiocode', hex: '007ACC'},
-	{slug: 'vim', hex: '019733'},
-	{slug: 'neovim', hex: '57A143'},
-	{slug: 'zedindustries', hex: '084CCF'},
-	{slug: 'openai', hex: '412991'},
-	{slug: 'anthropic', hex: 'D4A27F'},
-	{slug: 'ollama', hex: '000000'},
-	{slug: 'huggingface', hex: 'FFD21E'},
-	{slug: 'tensorflow', hex: 'FF6F00'},
-	{slug: 'pytorch', hex: 'EE4C2C'},
-	{slug: 'stripe', hex: '635BFF'},
-	{slug: 'shopify', hex: '7AB55C'},
-	{slug: 'wordpress', hex: '21759B'},
-	{slug: 'notion', hex: '000000'},
-	{slug: 'obsidian', hex: '7C3AED'},
-	{slug: 'slack', hex: '4A154B'},
-	{slug: 'discord', hex: '5865F2'},
-	{slug: 'telegram', hex: '26A5E4'},
-	{slug: 'x', hex: '000000'},
-	{slug: 'youtube', hex: 'FF0000'},
-	{slug: 'spotify', hex: '1DB954'},
-	{slug: 'steam', hex: '000000'},
-];
+const iconStoreKeyPrefix = 'simple-icons-wall.icons.';
 
 function widget(entry: WidgetEntry) {
 	const scheme = normalizeScheme(colorScheme, entry.colorScheme);
@@ -133,6 +54,7 @@ function widget(entry: WidgetEntry) {
 	const centerIconColor = scheme === 'light' ? '000000' : 'FFFFFF';
 	const size = normalizePositive(iconSize, 28);
 	const gap = normalizeNonNegative(iconGap);
+	const icons = getStoredIcons();
 	const grid = getGrid({
 		gap,
 		height: entry.size.height,
@@ -140,7 +62,7 @@ function widget(entry: WidgetEntry) {
 		width: entry.size.width,
 	});
 	const shuffledIcons = shuffleIcons(
-		filterIcons(scheme),
+		filterIcons(icons, scheme),
 		getShuffleSeed(entry.date, interval),
 	);
 	const visibleIcons = fillIcons(shuffledIcons, grid.rows * grid.columns);
@@ -233,8 +155,9 @@ function widget(entry: WidgetEntry) {
 	);
 }
 
-function widgetTimeline(): Timeline {
+async function widgetTimeline(): Promise<Timeline> {
 	const interval = normalizeUpdateInterval(updateInterval);
+	await loadIcons();
 
 	return {
 		entries: getTimelineDates(new Date(), interval).map((date) => ({date})),
@@ -333,7 +256,98 @@ function getIconColor(hex: string, scheme: Scheme): string {
 }
 
 function getIconUrl(slug: string): string {
-	return `https://cdn.jsdelivr.net/npm/simple-icons@${simpleIconsVersion}/icons/${slug}.svg`;
+	return getSimpleIconsUrl(`icons/${slug}.svg`);
+}
+
+function getIconDataUrl(): string {
+	return getSimpleIconsUrl('data/simple-icons.json');
+}
+
+function getIconStoreKey(): string {
+	return `${iconStoreKeyPrefix}${getSimpleIconsVersion()}`;
+}
+
+function getSimpleIconsUrl(path: string): string {
+	return `https://cdn.jsdelivr.net/npm/simple-icons@${encodeURIComponent(getSimpleIconsVersion())}/${path}`;
+}
+
+function getSimpleIconsVersion(): string {
+	const version = simpleIconsVersion.trim();
+
+	return version || 'latest';
+}
+
+function getStoredIcons(): IconItem[] {
+	return AwaitStore.array<IconItem>(getIconStoreKey(), []);
+}
+
+async function loadIcons(): Promise<void> {
+	try {
+		const response = await AwaitNetwork.request(getIconDataUrl(), {
+			headers: {
+				Accept: 'application/json',
+			},
+		});
+
+		if (response.code !== 200) {
+			return;
+		}
+
+		const icons = parseIconData(response.data);
+		if (icons.length > 0) {
+			AwaitStore.set(getIconStoreKey(), icons);
+		}
+	} catch {
+		// Keep using the last cached icon data if the CDN request fails.
+	}
+}
+
+function parseIconData(value: string): IconItem[] {
+	try {
+		const data = JSON.parse(value) as unknown;
+		if (!Array.isArray(data)) {
+			return [];
+		}
+
+		return data
+			.map((item) => normalizeIcon(item))
+			.filter((item): item is IconItem => item !== undefined);
+	} catch {
+		return [];
+	}
+}
+
+function normalizeIcon(value: unknown): IconItem | undefined {
+	const object = objectValue(value);
+	const slug = stringValue(object?.slug);
+	const hex = stringValue(object?.hex)?.toUpperCase();
+
+	if (!slug || !hex || !isHexColor(hex)) {
+		return undefined;
+	}
+
+	return {hex, slug};
+}
+
+function objectValue(value: unknown): JsonObject | undefined {
+	if (value && typeof value === 'object' && !Array.isArray(value)) {
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-type-assertion
+		return value as JsonObject;
+	}
+
+	return undefined;
+}
+
+function stringValue(value: unknown): string | undefined {
+	if (typeof value === 'string' && value.trim()) {
+		return value.trim();
+	}
+
+	return undefined;
+}
+
+function isHexColor(value: string): boolean {
+	return /^[\dA-F]{6}$/v.test(value);
 }
 
 function fillIcons(value: IconItem[], total: number): IconItem[] {
@@ -344,8 +358,8 @@ function fillIcons(value: IconItem[], total: number): IconItem[] {
 	return Array.from({length: total}, (_, index) => value[index % value.length]);
 }
 
-function filterIcons(scheme: Scheme): IconItem[] {
-	return icons.filter((icon) => {
+function filterIcons(value: IconItem[], scheme: Scheme): IconItem[] {
+	return value.filter((icon) => {
 		if (hideWhiteIcons && icon.hex === 'FFFFFF') {
 			return false;
 		}

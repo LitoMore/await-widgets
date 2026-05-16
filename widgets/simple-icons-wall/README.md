@@ -20,4 +20,4 @@ Open the widget panel and set:
 - `hideWhiteIcons`: hide background icons whose original brand color is white
 - `hideBlackIcons`: hide background icons whose original brand color is black
 
-The center Simple Icons logo is scaled automatically from the current grid.
+The icon list is loaded from jsDelivr's `data/simple-icons.json` for the configured Simple Icons version and cached for later renders. The center Simple Icons logo is scaled automatically from the current grid.
