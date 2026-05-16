@@ -8,7 +8,7 @@
     "test": "tsc --noEmit && xo"
   },
   "devDependencies": {
-    "@await-widget/runtime": "^0.0.8",
+    "@await-widget/runtime": "latest",
     "typescript": "^6.0.3",
     "xo": "^2.0.2"
   }
