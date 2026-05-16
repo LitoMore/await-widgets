@@ -1,3 +1,5 @@
+<p align="center"><img width="128" src="./assets/app-icon.webp"/></p>
+
 <h1 align="center">Await Widgets</h1>
 
 <p align="center">Custom widgets for <a href="https://github.com/await-widget/skills">Await</a></p>
