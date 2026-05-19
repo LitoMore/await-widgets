@@ -185,7 +185,6 @@ function renderStage(
 						const height = scaleValue(16, layout);
 
 						return (
-							// eslint-disable-next-line react/jsx-key
 							<ZStack
 								animation={motionAnimation}
 								frame={{width, height}}
@@ -224,7 +223,6 @@ function renderStage(
 				const height = Math.max(1, scaleValue(1, layout));
 
 				return (
-					// eslint-disable-next-line react/jsx-key
 					<Color
 						animation={motionAnimation}
 						frame={{width, height}}
@@ -246,7 +244,6 @@ function renderStage(
 				const height = scaleValue(obstacle.height, layout);
 
 				return (
-					// eslint-disable-next-line react/jsx-key
 					<ZStack
 						animation={motionAnimation}
 						frame={{width, height}}

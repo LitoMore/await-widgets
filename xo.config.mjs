@@ -10,9 +10,7 @@ const xoConfig = [
 	},
 	{
 		prettier: true,
-		react: true,
 		rules: {
-			'react/react-in-jsx-scope': 'off',
 			'sort-imports': [
 				'error',
 				{
@@ -29,11 +27,6 @@ const xoConfig = [
 					groups: ['builtin', 'external', 'parent', 'sibling', 'index'],
 					pathGroups: [
 						{
-							pattern: 'react',
-							group: 'builtin',
-							position: 'before',
-						},
-						{
 							pattern: '#{*,*/**/*.js}',
 							group: 'parent',
 							position: 'before',
@@ -49,17 +42,8 @@ const xoConfig = [
 						order: 'asc',
 						caseInsensitive: true,
 					},
-					pathGroupsExcludedImportTypes: ['react'],
 					warnOnUnassignedImports: true,
 					'newlines-between': 'never',
-				},
-			],
-			'react/jsx-sort-props': [
-				'error',
-				{
-					callbacksLast: true,
-					shorthandFirst: true,
-					reservedFirst: true,
 				},
 			],
 		},

@@ -113,7 +113,6 @@ function widget(entry: WidgetEntry) {
 				});
 
 				return (
-					// eslint-disable-next-line react/jsx-key
 					<ZStack
 						frame={{width: size, height: size}}
 						id={`${icon.slug}-${index}`}
