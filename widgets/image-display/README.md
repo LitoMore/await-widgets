@@ -2,6 +2,8 @@
 
 An Await widget that displays a configurable raster or SVG image URL with simple fit, crop, stretch, or tile behavior.
 
+<p align="center"><img src="./assets/screenshot-all.webp" width="200" /></p>
+
 ## Configuration
 
 Open the widget panel and set:
