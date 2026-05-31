@@ -1,4 +1,4 @@
-# Dino
+# Dino (WIP)
 
 An Await widget inspired by Chrome Dino. Tap the widget to start, jump, and restart after a crash.
 

@@ -8,8 +8,8 @@
 
 ## Widgets
 
-- [Dino](./widgets/dino) (WIP) - Plays a Chrome Dino-inspired tap-to-jump widget.
 - [Image Display](./widgets/image-display) - Displays a configurable image URL with contain, cover, stretch, or tile behavior.
+- [RSS Feed](./widgets/rss-feed) (WIP) - Displays the latest posts from a configurable RSS or Atom feed.
 - [Simple Icons Wall](./widgets/simple-icons-wall) - Renders a configurable Simple Icons wall.
 - [TRMNL](./widgets/trmnl) - Shows the current TRMNL display image using a TRMNL device API key.
 
