@@ -8,6 +8,7 @@
 
 ## Widgets
 
+- [Browserless.io](./widgets/browserless-io) - Captures and displays a Browserless.io screenshot sized to the widget.
 - [Image Display](./widgets/image-display) - Displays a configurable image URL with contain, cover, stretch, or tile behavior.
 - [RSS Feed](./widgets/rss-feed) (WIP) - Displays the latest posts from a configurable RSS or Atom feed.
 - [Simple Icons Wall](./widgets/simple-icons-wall) - Renders a configurable Simple Icons wall.
