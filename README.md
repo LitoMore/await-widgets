@@ -15,6 +15,8 @@
 - [Simple Icons Wall](./widgets/simple-icons-wall) - Renders a configurable Simple Icons wall.
 - [TRMNL](./widgets/trmnl) - Shows the current TRMNL display image using a TRMNL device API key.
 
+For more widgets, see the [Awesome Await Widgets](https://github.com/await-widget/awesome-await-widgets) list.
+
 ## Usage
 
 1. Open the Await app and create a new widget
