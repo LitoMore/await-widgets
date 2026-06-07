@@ -36,6 +36,7 @@ function widget(entry: WidgetEntry) {
 				rectRadius={radius}
 				stroke={{color: borderColor, lineWidth: 1}}
 				style="continuous"
+				fill=""
 			/>
 			{renderValue({
 				label: 'W',
