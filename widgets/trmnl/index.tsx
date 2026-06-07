@@ -1,4 +1,4 @@
-import {Image} from 'await';
+import {Color, Image, ZStack} from 'await';
 
 type JsonObject = Record<string, unknown>;
 
@@ -90,14 +90,10 @@ async function loadCurrentScreen() {
 function widget() {
 	const imageUrl = AwaitStore.string(imageUrlStoreKey);
 	return (
-		<Image
-			maxSides
-			maxSides_
-			resizable
-			aspectRatio="fit"
-			background={1}
-			url={imageUrl}
-		/>
+		<ZStack maxSides>
+			<Color value="white" />
+			<Image maxSides maxSides_ resizable aspectRatio="fit" url={imageUrl} />
+		</ZStack>
 	);
 }
 
