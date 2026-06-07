@@ -2,6 +2,8 @@
 
 An Await widget that shows the current TRMNL display image using a device API key.
 
+<p align="center"><img src="./assets/screenshot-large.webp" width="200" /></p>
+
 ## Configuration
 
 Open the widget panel and set:
