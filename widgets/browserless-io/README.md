@@ -32,4 +32,4 @@ This keeps the captured browser window matched to the widget instead of using a 
 
 ## Usage
 
-See the project root's [README.md](../../README.md#usage) for general usage instructions.
+See the project root's [README.md](https://github.com/LitoMore/await-widgets#usage) for general usage instructions.

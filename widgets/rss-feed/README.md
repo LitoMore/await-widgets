@@ -14,4 +14,4 @@ The widget requests the feed with `AwaitNetwork`, normalizes feed-level `title`,
 
 ## Usage
 
-See the project root's [README.md](../../README.md#usage) for general usage instructions.
+See the project root's [README.md](https://github.com/LitoMore/await-widgets#usage) for general usage instructions.

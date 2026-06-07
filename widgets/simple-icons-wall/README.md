@@ -28,4 +28,4 @@ The icon list is loaded from jsDelivr's `data/simple-icons.json` for the configu
 
 ## Usage
 
-See the project root's [README.md](../../README.md#usage) for general usage instructions.
+See the project root's [README.md](https://github.com/LitoMore/await-widgets#usage) for general usage instructions.

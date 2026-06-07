@@ -32,4 +32,4 @@ When `imageUrl` is empty, the widget shows a placeholder message prompting confi
 
 ## Usage
 
-See the project root's [README.md](../../README.md#usage) for general usage instructions.
+See the project root's [README.md](https://github.com/LitoMore/await-widgets#usage) for general usage instructions.
