@@ -2,6 +2,8 @@
 
 An Await widget for development and device checks. It shows the current widget size and helps measure the rounded corner radius used by the host device.
 
+<p align="center"><img src="./assets/screenshot-medium.webp" width="200" /></p>
+
 The widget reads its render size from Await and displays:
 
 - `W`: the current widget width, shown along the top edge
