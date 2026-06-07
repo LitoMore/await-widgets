@@ -17,3 +17,7 @@ Open the widget panel and set:
 - `colorScheme`: use the host color scheme or force light/dark
 - `showClouds`: whether to show the background clouds
 - `showScore`: whether to show the current and high score
+
+## Usage
+
+See the project root's [README.md](../../README.md#usage) for general usage instructions.

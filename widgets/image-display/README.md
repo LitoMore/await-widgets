@@ -29,3 +29,7 @@ To display a local image, add the file to the widget's files in Await and set `i
 SVG images are rendered with Await's native `Svg` component. Because that component does not expose tiled resizing, SVGs set to `tile` render once using the widget bounds instead of repeating.
 
 When `imageUrl` is empty, the widget shows a placeholder message prompting configuration in the widget panel.
+
+## Usage
+
+See the project root's [README.md](../../README.md#usage) for general usage instructions.

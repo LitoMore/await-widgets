@@ -19,3 +19,7 @@ Open the widget panel and set:
 - `backgroundCornerRadius`: the rounded rectangle radius used by the widget background
 
 The `R` label is inset based on the configured radius so it stays inside the rounded corner while measuring larger values.
+
+## Usage
+
+See the project root's [README.md](../../README.md#usage) for general usage instructions.

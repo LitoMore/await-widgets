@@ -11,3 +11,7 @@ Open the widget panel and set:
 - `updateInterval`: how often the widget refreshes the feed
 
 The widget requests the feed with `AwaitNetwork`, normalizes feed-level `title`, `description`, and `link` values, then displays item `title`, `content`, `description`, `link`, and `pubDate` fields when present. Featured view prefers article `content`; list view prefers shorter `description` or `summary` text.
+
+## Usage
+
+See the project root's [README.md](../../README.md#usage) for general usage instructions.

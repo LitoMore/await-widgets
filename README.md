@@ -15,6 +15,15 @@
 - [Simple Icons Wall](./widgets/simple-icons-wall) - Renders a configurable Simple Icons wall.
 - [TRMNL](./widgets/trmnl) - Shows the current TRMNL display image using a TRMNL device API key.
 
+## Usage
+
+1. Open the Await app and create a new widget
+1. Copy the widget code to the `index.tsx` file of the desired widget
+1. Configure the widget as needed (see each widget's README for details)
+1. Go to home screen and add the Await widget
+1. Long press the widget and tap "Edit Widget"
+1. Choose your widget from the list
+
 ## License
 
 MIT

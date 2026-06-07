@@ -29,3 +29,7 @@ The Browserless viewport is derived from the current widget size on each timelin
 ```
 
 This keeps the captured browser window matched to the widget instead of using a fixed screenshot size.
+
+## Usage
+
+See the project root's [README.md](../../README.md#usage) for general usage instructions.

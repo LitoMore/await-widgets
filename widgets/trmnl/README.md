@@ -17,3 +17,7 @@ The widget requests `GET https://trmnl.com/api/display/current` with:
 Access-Token: device_xxxxx
 Accept: application/json
 ```
+
+## Usage
+
+See the project root's [README.md](../../README.md#usage) for general usage instructions.
