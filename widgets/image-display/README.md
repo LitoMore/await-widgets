@@ -8,7 +8,7 @@ An Await widget that displays a configurable raster or SVG image URL with simple
 
 Open the widget panel and set:
 
-- `imageUrl`: the image URL to display
+- `imageUrl`: the image URL to display. It can be an absolute URL, a data URI, or a relative path to a file bundled with the widget.
 - `imageType`: whether to render the URL as `auto`, `image`, or `svg`
 - `displayMode`: how the image should fill the widget
 - `imagePosition`: where the image should be anchored when it does not fill evenly
@@ -16,6 +16,8 @@ Open the widget panel and set:
 - `paddingTop`, `paddingRight`, `paddingBottom`, `paddingLeft`: padding around the displayed image or placeholder content
 
 When `imageType` is `auto`, the widget treats `.svg`/`.svgz` URLs and `data:image/svg+xml` URLs as SVGs. Use `svg` for SVG URLs that do not include a detectable extension or data URI media type, and use `image` to force raster image rendering.
+
+To display a local image, add the file to the widget's files in Await and set `imageUrl` to its relative path, such as `./photo.png` or `images/logo.svg`.
 
 ## Display Modes
 
