@@ -87,13 +87,23 @@ async function loadCurrentScreen() {
 	}
 }
 
+// @panel
+const colorInvert = true;
+// @panel
+const useTransparent = true;
+
 function widget() {
-	const imageUrl = AwaitStore.string(imageUrlStoreKey);
 	return (
-		<ZStack maxSides>
-			<Color value="white" />
-			<Image maxSides maxSides_ resizable aspectRatio="fit" url={imageUrl} />
-		</ZStack>
+		<Image
+			url={AwaitStore.string(imageUrlStoreKey)}
+			resizable
+			aspectRatio='fit'
+			maxSides
+			background={1}
+			compositingGroup
+			colorInvert={colorInvert}
+			luminanceToAlpha={useTransparent}
+			colorInvert_={useTransparent}/>
 	);
 }
 
