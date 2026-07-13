@@ -661,7 +661,7 @@ function predictGameOverAt(record: GameRecord, now: number): number {
 function getTimelineDates(options: TimelineDateOptions): Date[] {
 	const times: number[] = [];
 
-	for (let time = options.startAt; time <= options.endAt; ) {
+	for (let time = options.startAt; time <= options.endAt;) {
 		times.push(time);
 		time += getTimelineFrameInterval(options.record, time, options.inApp);
 	}
