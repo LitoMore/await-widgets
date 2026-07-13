@@ -8,6 +8,10 @@ const imageUrlStoreKey = 'trmnl.imageUrl';
 const trmnlDeviceApiKey = '';
 // @panel
 const apiBaseUrl = 'https://trmnl.com';
+// @panel
+const colorInvert = true;
+// @panel
+const useTransparent = true;
 
 function objectValue(value: unknown): JsonObject | undefined {
 	if (value && typeof value === 'object' && !Array.isArray(value)) {
@@ -88,12 +92,18 @@ async function loadCurrentScreen() {
 }
 
 function widget() {
-	const imageUrl = AwaitStore.string(imageUrlStoreKey);
 	return (
-		<ZStack maxSides>
-			<Color value="white" />
-			<Image maxSides maxSides_ resizable aspectRatio="fit" url={imageUrl} />
-		</ZStack>
+		<Image
+			url={AwaitStore.string(imageUrlStoreKey)}
+			resizable
+			aspectRatio="fit"
+			maxSides
+			background={1}
+			compositingGroup
+			colorInvert={colorInvert}
+			luminanceToAlpha={useTransparent}
+			colorInvert_={useTransparent}
+		/>
 	);
 }
 
