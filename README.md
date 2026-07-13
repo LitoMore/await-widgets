@@ -13,7 +13,7 @@
 - [Measure](./widgets/measure) - Shows the current widget size and helps measure the host widget corner radius.
 - [RSS Feed](./widgets/rss-feed) (WIP) - Displays the latest posts from a configurable RSS or Atom feed.
 - [Simple Icons Wall](./widgets/simple-icons-wall) - Renders a configurable Simple Icons wall.
-- [TRMNL](./widgets/trmnl) - Shows the current TRMNL display image using a TRMNL device API key.
+- [TRMNL](./widgets/trmnl) - Shows the current TRMNL display image with configurable color inversion and transparency.
 
 For more widgets, see the [Awesome Await Widgets](https://github.com/await-widget/awesome-await-widgets) list.
 
