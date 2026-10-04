@@ -57,7 +57,7 @@ type Palette = {
 type LayoutMetrics = {
 	readonly bodyFontSize: number;
 	readonly compact: boolean;
-	readonly featuredDescriptionLines: number;
+	readonly featuredBodyFontSize: number;
 	readonly featuredTitleLines: number;
 	readonly headerFontSize: number;
 	readonly listCount: number;
@@ -86,17 +86,6 @@ type ResponsiveNumber = {
 	readonly compact: number;
 	readonly default: number;
 	readonly roomy: number;
-};
-
-type FeaturedLineOptions = {
-	readonly bodyFontSize: number;
-	readonly metaFontSize: number;
-	readonly minLines: number;
-	readonly padding: number;
-	readonly sectionGap: number;
-	readonly size: Size;
-	readonly titleFontSize: number;
-	readonly titleLines: number;
 };
 
 function widget(entry: WidgetEntry) {
@@ -218,30 +207,53 @@ function renderFeatured(
 					fontSize={metrics.titleFontSize}
 					fontWeight={800}
 					foreground={palette.primary}
-					lineHeight="tight"
+					layoutPriority={1}
 					lineLimit={metrics.featuredTitleLines}
-					minimumScaleFactor={0.65}
 					value={item.title ?? fallbackFeedTitle}
 				/>
 				{articleContent ? (
 					<Text
-						fontSize={metrics.bodyFontSize}
+						fontSize={metrics.featuredBodyFontSize}
 						foreground={palette.secondary}
-						lineHeight="tight"
-						lineLimit={metrics.featuredDescriptionLines}
-						minimumScaleFactor={0.7}
+						frame={{
+							maxWidth: 'max',
+							maxHeight: 'max',
+							alignment: 'topLeading',
+						}}
 						value={articleContent}
 					/>
-				) : undefined}
-				<Spacer minLength={0} />
-				{meta ? (
+				) : (
+					<Spacer minLength={0} />
+				)}
+				<HStack
+					alignment="firstTextBaseline"
+					layoutPriority={1}
+					maxWidth="max"
+					padding={{
+						horizontal: metrics.compact ? 10 : 8,
+						bottom: metrics.compact ? 10 : 6,
+					}}
+					spacing={12}
+				>
 					<Text
 						fontSize={metrics.metaFontSize}
 						foreground={palette.tertiary}
+						frame={{maxWidth: 'max', alignment: 'leading'}}
 						lineLimit={1}
-						value={meta}
+						value={feed.title ?? fallbackFeedTitle}
 					/>
-				) : undefined}
+					{meta ? (
+						<Text
+							fixedSize
+							fontSize={metrics.metaFontSize}
+							foreground={palette.tertiary}
+							layoutPriority={1}
+							lineLimit={1}
+							textAlignment="trailing"
+							value={meta}
+						/>
+					) : undefined}
+				</HStack>
 			</VStack>
 		</ZStack>
 	);
@@ -435,7 +447,11 @@ function parseFeed(xml: string): Omit<FeedRecord, 'fetchedAt'> {
 		getElementContent(xml, 'channel') ?? getElementContent(xml, 'feed');
 	const feedContent = channel ?? xml;
 	const title = getElementText(feedContent, ['title']);
-	const description = getElementText(feedContent, ['description', 'subtitle']);
+	const description = getElementText(
+		feedContent,
+		['description', 'subtitle'],
+		true,
+	);
 	const link = getLink(feedContent);
 	const items: FeedItem[] = [];
 	const itemExpression =
@@ -445,8 +461,16 @@ function parseFeed(xml: string): Omit<FeedRecord, 'fetchedAt'> {
 	while (itemMatch && items.length < maxFeedItems) {
 		const itemContent = itemMatch[1] ?? itemMatch[2] ?? '';
 		const item = normalizeParsedItem({
-			content: getElementText(itemContent, ['content:encoded', 'content']),
-			description: getElementText(itemContent, ['description', 'summary']),
+			content: getElementText(
+				itemContent,
+				['content:encoded', 'content'],
+				true,
+			),
+			description: getElementText(
+				itemContent,
+				['description', 'summary'],
+				true,
+			),
 			link: getLink(itemContent),
 			pubDate: getElementText(itemContent, [
 				'pubDate',
@@ -473,11 +497,11 @@ function parseFeed(xml: string): Omit<FeedRecord, 'fetchedAt'> {
 }
 
 function normalizeParsedItem(item: FeedItem): FeedItem | undefined {
-	const title = truncateText(item.title, 180);
-	const content = truncateText(item.content, 2400);
-	const description = truncateText(item.description, 600);
+	const title = normalizeText(item.title);
+	const content = normalizeText(item.content);
+	const description = normalizeText(item.description);
 	const link = normalizeOptionalUrl(item.link);
-	const pubDate = truncateText(item.pubDate, 80);
+	const pubDate = normalizeText(item.pubDate);
 
 	if (!title && !description && !content) {
 		return undefined;
@@ -503,14 +527,18 @@ function getElementContent(source: string, tag: string): string | undefined {
 	return match?.[1];
 }
 
-function getElementText(source: string, tags: string[]): string | undefined {
+function getElementText(
+	source: string,
+	tags: string[],
+	html = false,
+): string | undefined {
 	for (const tag of tags) {
 		const content = getElementContent(source, tag);
 		if (!content) {
 			continue;
 		}
 
-		const text = cleanText(content);
+		const text = cleanText(content, html);
 		if (text) {
 			return text;
 		}
@@ -520,18 +548,24 @@ function getElementText(source: string, tags: string[]): string | undefined {
 }
 
 function getLink(source: string): string | undefined {
-	const textLink = /<link(?:\s[^>]*)?>([\s\S]*?)<\/link>/iv.exec(source);
-	const cleanedTextLink = textLink ? cleanText(textLink[1]) : undefined;
+	const links = source.matchAll(
+		/<link\b([^>]*?)(?:\/>|>([\s\S]*?)<\/link>)/giv,
+	);
 
-	if (cleanedTextLink) {
-		return normalizeOptionalUrl(cleanedTextLink);
-	}
+	for (const [, attributes, content] of links) {
+		const href = /(?:^|\s)href\s*=\s*(["'])(.*?)\1/iv.exec(attributes);
+		const relation = /(?:^|\s)rel\s*=\s*(["'])(.*?)\1/iv.exec(attributes);
 
-	const hrefLink = /<link\b[^>]*\bhref=(["'])(.*?)\1[^>]*>/iv.exec(source);
-	const cleanedHrefLink = hrefLink ? cleanText(hrefLink[2]) : undefined;
+		if (href && relation && relation[2].trim() !== 'alternate') {
+			continue;
+		}
 
-	if (cleanedHrefLink) {
-		return normalizeOptionalUrl(cleanedHrefLink);
+		const value = href?.[2] ?? content;
+		const url = value ? normalizeOptionalUrl(cleanText(value)) : undefined;
+
+		if (url) {
+			return url;
+		}
 	}
 
 	const guidLink = getElementText(source, ['guid']);
@@ -539,12 +573,25 @@ function getLink(source: string): string | undefined {
 	return normalizeOptionalUrl(guidLink);
 }
 
-function cleanText(value: string): string {
-	return decodeEntities(value)
-		.replaceAll(/<!\[CDATA\[([\s\S]*?)\]\]>/giv, '$1')
-		.replaceAll(/<[^>]+>/gv, ' ')
-		.replaceAll(/\s+/gv, ' ')
-		.trim();
+function cleanText(value: string, html = false): string {
+	const text = decodeXmlText(value);
+	const plainText = html
+		? decodeEntities(text.replaceAll(/<[^>]+>/gv, ' '))
+		: text;
+
+	return plainText.replaceAll(/\s+/gv, ' ').trim();
+}
+
+function decodeXmlText(value: string): string {
+	let text = '';
+	let position = 0;
+
+	for (const match of value.matchAll(/<!\[CDATA\[([\s\S]*?)\]\]>/giv)) {
+		text += decodeEntities(value.slice(position, match.index)) + match[1];
+		position = match.index + match[0].length;
+	}
+
+	return text + decodeEntities(value.slice(position));
 }
 
 function decodeEntities(value: string): string {
@@ -655,7 +702,7 @@ function getFeedUrl(): string {
 	const normalized = value.startsWith('feed://')
 		? `https://${value.slice('feed://'.length)}`
 		: value;
-	const withProtocol = /^[a-z][a-z\d+.-]*:\/\//iv.test(normalized)
+	const withProtocol = /^[a-z][a-z\d+.\-]*:\/\//iv.test(normalized)
 		? normalized
 		: `https://${normalized}`;
 
@@ -718,11 +765,16 @@ function getLayoutMetrics(size: Size): LayoutMetrics {
 		roomy: 18,
 	});
 	const sectionGap = compact ? 6 : 10;
-	const titleFontSize = responsiveNumber(breakpoint, {
-		compact: 17,
-		default: 22,
-		roomy: 28,
-	});
+	const featuredBodyFontSize = Math.round(
+		Math.min(
+			24,
+			Math.max(
+				size.width >= 260 ? 14 : 12,
+				Math.sqrt(size.width * size.height) / 20,
+			),
+		),
+	);
+	const titleFontSize = Math.round(featuredBodyFontSize * 1.5);
 	const featuredTitleLines = responsiveNumber(breakpoint, {
 		compact: 3,
 		default: 3,
@@ -743,20 +795,7 @@ function getLayoutMetrics(size: Size): LayoutMetrics {
 	return {
 		bodyFontSize,
 		compact,
-		featuredDescriptionLines: getFeaturedDescriptionLines({
-			bodyFontSize,
-			metaFontSize,
-			minLines: responsiveNumber(breakpoint, {
-				compact: 3,
-				default: 5,
-				roomy: 8,
-			}),
-			padding,
-			sectionGap,
-			size,
-			titleFontSize,
-			titleLines: featuredTitleLines,
-		}),
+		featuredBodyFontSize,
 		featuredTitleLines,
 		headerFontSize: compact ? 11 : 12,
 		listCount: Math.max(
@@ -778,20 +817,6 @@ function getLayoutMetrics(size: Size): LayoutMetrics {
 		showListDescriptions: size.width >= 240 && size.height >= 220,
 		titleFontSize,
 	};
-}
-
-function getFeaturedDescriptionLines(options: FeaturedLineOptions): number {
-	const contentHeight = Math.max(0, options.size.height - options.padding * 2);
-	const reservedHeight =
-		options.titleFontSize * options.titleLines +
-		options.metaFontSize +
-		options.sectionGap * 2;
-	const lineHeight = Math.max(1, options.bodyFontSize * 1.15);
-	const availableLines = Math.floor(
-		(contentHeight - reservedHeight) / lineHeight,
-	);
-
-	return Math.max(options.minLines, availableLines);
 }
 
 function responsiveNumber(
@@ -957,24 +982,15 @@ function normalizeUpdateInterval(value: string): UpdateInterval {
 }
 
 function sanitizeTagName(value: string): string {
-	return value.replaceAll(/[^A-Za-z0-9:-]/gv, '');
+	return value.replaceAll(/[^A-Za-z0-9:\-]/gv, '');
 }
 
-function truncateText(
-	value: string | undefined,
-	maxLength: number,
-): string | undefined {
+function normalizeText(value: string | undefined): string | undefined {
 	if (!value) {
 		return undefined;
 	}
 
-	const normalized = cleanText(value);
-
-	if (normalized.length <= maxLength) {
-		return normalized;
-	}
-
-	return `${normalized.slice(0, Math.max(0, maxLength - 3)).trimEnd()}...`;
+	return value.replaceAll(/\s+/gv, ' ').trim();
 }
 
 function objectValue(value: unknown): JsonObject | undefined {
