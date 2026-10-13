@@ -1,13 +1,16 @@
-import {Color, Image, ZStack} from 'await';
+import {Image} from 'await';
 
 type JsonObject = Record<string, unknown>;
 
 const imageUrlStoreKey = 'trmnl.imageUrl';
+const defaultRefreshInterval = 30 * 60 * 1000;
 
 // @panel {type:'password'}
 const trmnlDeviceApiKey = '';
 // @panel
 const apiBaseUrl = 'https://trmnl.com';
+// @panel
+const apiPath = '/api/display';
 // @panel
 const colorInvert = true;
 // @panel
@@ -60,23 +63,21 @@ function storeImageUrl(imageUrl: string | undefined): void {
 	}
 }
 
-async function loadCurrentScreen() {
+async function loadScreen(): Promise<string | undefined> {
 	const apiKey = trmnlDeviceApiKey.trim();
 	if (!apiKey) {
-		return;
+		return undefined;
 	}
 
 	try {
-		const baseUrl = apiBaseUrl.replace(/\/+$/v, '');
-		const response = await AwaitNetwork.request(
-			`${baseUrl}/api/display/current`,
-			{
-				headers: {
-					'Access-Token': apiKey,
-					Accept: 'application/json',
-				},
+		const baseUrl = apiBaseUrl.trim().replace(/\/+$/v, '');
+		const path = apiPath.trim().replace(/^\/+/v, '') || 'api/display';
+		const response = await AwaitNetwork.request(`${baseUrl}/${path}`, {
+			headers: {
+				'Access-Token': apiKey,
+				Accept: 'application/json',
 			},
-		);
+		});
 
 		if (response.code === 200) {
 			const payload = JSON.parse(response.data) as unknown;
@@ -85,10 +86,24 @@ async function loadCurrentScreen() {
 			if (imageUrl) {
 				storeImageUrl(imageUrl);
 			}
+
+			return firstString(root, ['refresh_rate']);
 		}
 	} catch {
-		// Do nothing on error
+		// Keep the last image and retry on the next scheduled update.
 	}
+
+	return undefined;
+}
+
+function getNextUpdate(refreshRate: string | undefined, date: Date): Date {
+	const seconds = Number(refreshRate);
+	const update = new Date(date.getTime() + seconds * 1000);
+	if (seconds > 0 && Number.isFinite(update.getTime())) {
+		return update;
+	}
+
+	return new Date(date.getTime() + defaultRefreshInterval);
 }
 
 function widget() {
@@ -108,13 +123,11 @@ function widget() {
 }
 
 async function widgetTimeline(): Promise<Timeline> {
-	await loadCurrentScreen();
+	const refreshRate = await loadScreen();
+	const date = new Date();
 	return {
-		entries: [
-			{
-				date: new Date(),
-			},
-		],
+		entries: [{date}],
+		update: getNextUpdate(refreshRate, date),
 	};
 }
 
