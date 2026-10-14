@@ -3,9 +3,9 @@
 An Await widget that shows the current TRMNL display image using a device API key, with optional color inversion and transparency.
 
 <p align="center">
-<img src="./assets/screenshot-large.webp" width="400" />
-<br />
-<img src="./assets/screenshot-transparent.webp" width="400" />
+<img src="./assets/screenshot-large.webp" height="150" />
+<img src="./assets/screenshot-transparent.webp" height="150" />
+<img src="./assets/screenshot-xlarge.webp" height="150" />
 </p>
 
 <p align="center"><a href="https://apps.apple.com/app/id6755678187"><img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg"/></a></p>
